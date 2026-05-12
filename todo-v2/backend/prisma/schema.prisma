@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  // Um usuário tem muitas tasks
+  tasks     Task[]
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?  // O ? significa que é opcional
+  status      Status   @default(TODO)
+  order       Int      @default(0) // Controla a posição no drag-drop
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Cada task pertence a um usuário
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+// Enum = lista de valores fixos possíveis para o status
+enum Status {
+  TODO
+  IN_PROGRESS
+  DONE
+}
